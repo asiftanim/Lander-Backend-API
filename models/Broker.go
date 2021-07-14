@@ -1,5 +1,9 @@
 package models
 
+import (
+    "time"
+)
+
 type Broker struct{
 	Id        	uint 
 	Name      	string 
@@ -9,7 +13,7 @@ type Broker struct{
 	IsActive    bool  	`json:"is_active"`
 	IsDelete    bool	`json:"is_delete"`
 	CreatedBy	uint
-	CreatedDate int64
+	CreatedDate time.Time
 	ModifiedBy	uint
-	ModifiedDate int64
+	ModifiedDate time.Time
 }

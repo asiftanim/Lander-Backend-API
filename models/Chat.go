@@ -1,5 +1,9 @@
 package models
 
+import (
+    "time"
+)
+
 type Chat struct{
 	Id        	uint 
 	Message     string 
@@ -7,5 +11,5 @@ type Chat struct{
 	ReceiverId  uint `json:"receiver_id"`
 	Status  	uint
 	UserType	uint  `json:"user_type"`
-	CreatedDate int64 `json:"created_date"`
+	CreatedDate time.Time 
 }
