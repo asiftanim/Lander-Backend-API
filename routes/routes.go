@@ -20,6 +20,7 @@ func Init() *gin.Engine{
 				broker.POST("login", controllers.Login)
 				broker.POST("registration", controllers.RegisterBroker)
 				broker.PUT("profile-update", controllers.UpdateBroker)
+				broker.POST("create-message", controllers.InsertChat)
 			}
 			
 			//Prospect
@@ -27,10 +28,11 @@ func Init() *gin.Engine{
 			{
 				prospect.POST("create-prospect", controllers.RegisterProspect)
 				prospect.POST("verify-email", controllers.VerifyProspectEmail)
+				prospect.POST("create-message", controllers.InsertChat)
 			}
 	
 			//Common
-			v1.POST("create-chat", controllers.InsertChat)
+			
 	
 		}
 	}

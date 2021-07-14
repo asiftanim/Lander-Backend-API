@@ -34,7 +34,9 @@ func Login(c *gin.Context) {
 			c.JSON(http.StatusUnprocessableEntity, err.Error())
 			return
 		}
-		c.JSON(http.StatusOK, token)
+		c.JSON(http.StatusOK, gin.H{
+			"_token": token,
+		})
 	}else{
 		c.JSON(http.StatusUnauthorized, "Please provide valid login credentials")
 	}
@@ -105,6 +107,6 @@ func InsertChat(c *gin.Context){
 }
 
 func UpdateBroker(c *gin.Context){
-	
+
 }
 
