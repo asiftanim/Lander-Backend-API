@@ -10,21 +10,32 @@ import (
 func Init() *gin.Engine{
 	server := gin.New()
 
-	//Code refactor needed
-	api_version := server.Group("/v1/api")
+	api := server.Group("api")
 	{
-		//Broker
-		api_version.POST("login", controllers.Login)
-		api_version.POST("registration", controllers.RegisterBroker)
-
-		//Prospect
-		api_version.POST("create-prospect", controllers.RegisterProspect)
-		api_version.POST("verify-email", controllers.VerifyProspectEmail)
-
-		//Common
-		api_version.POST("create-chat", controllers.InsertChat)
-
+		v1 := api.Group("v1")
+		{
+			//Broker
+			broker := v1.Group("broker")
+			{
+				broker.POST("login", controllers.Login)
+				broker.POST("registration", controllers.RegisterBroker)
+				broker.PUT("profile-update", controllers.UpdateBroker)
+			}
+			
+			//Prospect
+			prospect := v1.Group("prospect")
+			{
+				prospect.POST("create-prospect", controllers.RegisterProspect)
+				prospect.POST("verify-email", controllers.VerifyProspectEmail)
+			}
+	
+			//Common
+			v1.POST("create-chat", controllers.InsertChat)
+	
+		}
 	}
+
+	
 
 	return server;
 }

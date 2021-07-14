@@ -104,3 +104,7 @@ func InsertChat(c *gin.Context){
 	}
 }
 
+func UpdateBroker(c *gin.Context){
+	
+}
+
