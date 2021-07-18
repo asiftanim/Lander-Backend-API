@@ -5,20 +5,20 @@ import (
 )
 
 type ProspectDomainQuery struct{
-	Id        			uint
-	prospect_id     	uint 
-	broker_id      		uint 
-	domain_id      		uint 
-	offer_type      	uint 
-	offered_price   	float64 
-	asking_price    	float64 
-	Currency			string 
-	Status				uint 
-	is_price_seen   	bool 
-	price_seen_time 	time.Time 
-	is_interacted 		bool 
-	mail_sent_status	bool 
-	mail_sent_time		time.Time  
-	CreatedDate 		time.Time
-	ModifiedDate 		time.Time
+	ID        		uint
+	ProspectID     	uint
+	BrokerID      	uint 
+	DomainId      	uint
+	OfferType      	uint 
+	OfferedPrice   	float64 
+	AskingPrice    	float64 
+	Currency		string 
+	Status			uint 
+	IsPriceSeen   	bool 
+	PriceSeenTime 	time.Time 
+	IsInteracted 	bool 
+	MailSentStatus	bool 
+	MailSentTime	time.Time  
+	CreatedDate 	time.Time
+	ModifiedDate 	time.Time
 }

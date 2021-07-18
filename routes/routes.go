@@ -2,7 +2,7 @@ package routes
 
 import (
 	"lander/controllers"
-	
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +21,12 @@ func Init() *gin.Engine{
 				broker.POST("registration", controllers.RegisterBroker)
 				broker.PUT("profile-update", controllers.UpdateBroker)
 				broker.POST("create-message", controllers.InsertChat)
+				broker.GET("get-all-prospects", controllers.GetAllProspects)
+				broker.GET("get-prospect-by-email", controllers.GetProspectByEmail)
+				broker.GET("get-prospect-by-id", controllers.GetProspectById)
+				broker.POST("set-price", controllers.GetAllProspects)
+				broker.GET("get-all-domain-queries", controllers.GetProspectDomainQuery)
+				
 			}
 			
 			//Prospect
@@ -29,6 +35,7 @@ func Init() *gin.Engine{
 				prospect.POST("create-prospect", controllers.RegisterProspect)
 				prospect.POST("verify-email", controllers.VerifyProspectEmail)
 				prospect.POST("create-message", controllers.InsertChat)
+				prospect.POST("create-domain-query", controllers.CreateProspectDomainQuery)
 			}
 	
 			//Common

@@ -106,7 +106,24 @@ func InsertChat(c *gin.Context){
 	}
 }
 
+func GetAllProspects(c *gin.Context){
+	var prospects []models.Prospect
+
+	result := database.DB.Find(&prospects)
+
+	if result.Error != nil{
+		c.JSON(http.StatusNotFound, result.Error)
+			return
+	}else{
+		c.JSON(http.StatusOK, gin.H{
+			"data": prospects,
+		})
+	}
+}
+
 func UpdateBroker(c *gin.Context){
 
 }
+
+
 

@@ -15,6 +15,8 @@ func RegisterProspect(c *gin.Context){
 	var prospect models.Prospect
 	c.BindJSON(&prospect)
 
+	//check if cookie exist. If not then check if mail exists. if not then register user else retrive and set cookie
+
 	prospect.CookiSecrect = GenerateCookieSecret()
 	prospect.IsActive = true
 	prospect.IsDelete = false
@@ -24,13 +26,20 @@ func RegisterProspect(c *gin.Context){
 
 	err := database.DB.Create(&prospect).Error;
 
+	expiration := time.Now().Add(365 * 24 * time.Hour)
+	cookie := http.Cookie{Name: "ProspectCookiSecrect", Value: prospect.CookiSecrect, Expires: expiration}
+	http.SetCookie(c.Writer, &cookie)
+
 	if err != nil {
 		fmt.Println(err.Error())
 		c.JSON(http.StatusNotFound, "Email Already Exists")
 	} else {
+
 		c.JSON(http.StatusOK, prospect)
 	}
 }
+
+
 
 func VerifyProspectEmail(c *gin.Context) {
 	var prospect models.Prospect
@@ -60,4 +69,68 @@ func GenerateCookieSecret() string {
 	}
 	
 	return hex.EncodeToString(key)
+}
+
+func GetProspectByEmail(c *gin.Context){
+	var prospect models.Prospect
+	c.BindJSON(&prospect)
+
+	err := database.DB.Where("Email = ?", prospect.Email).First(&prospect).Error
+
+	if err != nil{
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}else{
+		c.JSON(http.StatusOK, prospect)
+	}
+}
+
+func GetProspectById(c *gin.Context){
+	var prospect models.Prospect
+	c.BindJSON(&prospect)
+
+	err := database.DB.Where("Id = ?", prospect.Id).First(&prospect).Error
+
+	if err != nil{
+		c.JSON(http.StatusUnprocessableEntity, err.Error())
+		return
+	}else{
+		c.JSON(http.StatusOK, prospect)
+	}
+}
+
+func CreateProspectDomainQuery(c *gin.Context){
+	var domainQuery models.ProspectDomainQuery
+	c.BindJSON(&domainQuery)
+
+	domainQuery.Status = 1 //will change to Enum later
+	domainQuery.CreatedDate = time.Now()
+	domainQuery.ModifiedDate = time.Now()
+
+	fmt.Println(domainQuery)
+
+	err := database.DB.Create(&domainQuery).Error;
+
+	if err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusNotFound, err.Error)
+	} else {
+		c.JSON(http.StatusOK, domainQuery)
+	}
+}
+
+func GetProspectDomainQuery(c *gin.Context){
+	var domainQueries []models.ProspectDomainQuery
+	c.BindJSON(&domainQueries)
+
+	result := database.DB.Find(&domainQueries)
+
+	if result.Error != nil{
+		c.JSON(http.StatusNotFound, result.Error)
+			return
+	}else{
+		c.JSON(http.StatusOK, gin.H{
+			"data": domainQueries,
+		})
+	}
 }
