@@ -26,7 +26,7 @@ func Init() *gin.Engine{
 				broker.GET("get-prospect-by-id", controllers.GetProspectById)
 				broker.POST("set-price", controllers.GetAllProspects)
 				broker.GET("get-all-domain-queries", controllers.GetProspectDomainQuery)
-				broker.GET("update-domain-asking-price", controllers.UpdateDomainAskingPrice)
+				broker.PUT("update-domain-asking-price", controllers.UpdateDomainAskingPrice)
 				
 			}
 			

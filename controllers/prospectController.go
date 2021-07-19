@@ -156,5 +156,4 @@ func CreateNewTransaction(c *gin.Context){
 		c.JSON(http.StatusOK, transaction)
 	}
 
-
 }

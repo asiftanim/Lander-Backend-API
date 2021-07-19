@@ -5,11 +5,11 @@ import (
 )
 
 type Broker struct{
-	Id        	uint 
+	ID        	uint 
 	Name      	string 
 	Email		string 
 	Password    string 
-	image_url  	string
+	ImagePath  	string
 	IsActive    bool  	`json:"is_active"`
 	IsDelete    bool	`json:"is_delete"`
 	CreatedBy	uint
