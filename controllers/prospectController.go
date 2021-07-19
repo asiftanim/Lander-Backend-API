@@ -134,3 +134,27 @@ func GetProspectDomainQuery(c *gin.Context){
 		})
 	}
 }
+
+func CreateNewTransaction(c *gin.Context){
+	var transaction models.Transaction
+	c.BindJSON(&transaction)
+
+	
+	transaction.CreatedDate = time.Now()
+	transaction.ModifiedDate = time.Now()
+	transaction.IsActive = true
+	transaction.IsDelete = false
+	
+	fmt.Println(transaction)
+
+	err := database.DB.Create(&transaction).Error;
+
+	if err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusNotFound, err.Error)
+	} else {
+		c.JSON(http.StatusOK, transaction)
+	}
+
+
+}

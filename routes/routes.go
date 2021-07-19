@@ -26,6 +26,7 @@ func Init() *gin.Engine{
 				broker.GET("get-prospect-by-id", controllers.GetProspectById)
 				broker.POST("set-price", controllers.GetAllProspects)
 				broker.GET("get-all-domain-queries", controllers.GetProspectDomainQuery)
+				broker.GET("update-domain-asking-price", controllers.UpdateDomainAskingPrice)
 				
 			}
 			
@@ -36,6 +37,7 @@ func Init() *gin.Engine{
 				prospect.POST("verify-email", controllers.VerifyProspectEmail)
 				prospect.POST("create-message", controllers.InsertChat)
 				prospect.POST("create-domain-query", controllers.CreateProspectDomainQuery)
+				prospect.POST("create-transaction", controllers.CreateNewTransaction)
 			}
 	
 			//Common

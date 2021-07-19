@@ -122,6 +122,22 @@ func GetAllProspects(c *gin.Context){
 }
 
 func UpdateBroker(c *gin.Context){
+	 
+}
+
+func UpdateDomainAskingPrice(c *gin.Context){
+	var domainQuery models.ProspectDomainQuery
+	c.BindJSON(&domainQuery)
+
+	fmt.Println(domainQuery)
+	err := database.DB.Save(&domainQuery).Error;
+
+	if err != nil {
+		fmt.Println(err.Error())
+		c.JSON(http.StatusNotFound, err.Error)
+	} else {
+		c.JSON(http.StatusOK, transaction)
+	}
 
 }
 

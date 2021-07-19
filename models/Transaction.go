@@ -6,10 +6,10 @@ import (
 
 type Transaction struct{
 	Id        					uint
-	prospect_id     			uint 
-	prospect_domain_query_id    uint 
+	ProspectId	     			uint 
+	ProspectDomainQueryID    	uint 
 	Price   					float64 
-	payment_method    			uint 
+	PaymentMethod    			uint 
 	CreatedBy					uint
 	CreatedDate 				time.Time
 	ModifiedBy					uint
