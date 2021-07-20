@@ -72,8 +72,8 @@ func RegisterBroker(c *gin.Context) {
 	broker.Password = hashPass
 	broker.IsActive = true
 	broker.IsDelete = false
-	broker.CreatedDate = time.Now()
-	broker.ModifiedDate = time.Now()
+	broker.CreatedAt = time.Now()
+	broker.ModifiedAt = time.Now()
 
 	err := database.DB.Create(&broker).Error
 
@@ -99,7 +99,7 @@ func InsertChat(c *gin.Context) {
 	var chat models.Chat
 	c.BindJSON(&chat)
 
-	chat.CreatedDate = time.Now()
+	chat.CreatedAt = time.Now()
 
 	err := database.DB.Create(&chat).Error
 
@@ -156,7 +156,7 @@ func UpdateDomainAskingPrice(c *gin.Context) {
 	c.BindJSON(&domainQuery)
 
 	domainQuery.Status = 4
-	domainQuery.ModifiedDate = time.Now()
+	domainQuery.ModifiedAt = time.Now()
 
 	fmt.Println(domainQuery)
 
@@ -173,8 +173,7 @@ func UpdateDomainAskingPrice(c *gin.Context) {
 
 func GenerateBase64ToImage(data string) {
 
-	
- 	r := bytes.NewReader([]byte(data))
+	r := bytes.NewReader([]byte(data))
 
 	reader := base64.NewDecoder(base64.StdEncoding, r)
 	m, formatString, err := image.Decode(reader)

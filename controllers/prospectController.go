@@ -1,17 +1,18 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"time"
-	"lander/database"
-	"lander/models"
-	"fmt"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
+	"lander/database"
+	"lander/models"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-func RegisterProspect(c *gin.Context){
+func RegisterProspect(c *gin.Context) {
 	var prospect models.Prospect
 	c.BindJSON(&prospect)
 
@@ -21,10 +22,10 @@ func RegisterProspect(c *gin.Context){
 	prospect.IsActive = true
 	prospect.IsDelete = false
 	prospect.IsEmailVerified = false
-	prospect.CreatedDate = time.Now()
-	prospect.ModifiedDate = time.Now()
+	prospect.CreatedAt = time.Now()
+	prospect.ModifiedAt = time.Now()
 
-	err := database.DB.Create(&prospect).Error;
+	err := database.DB.Create(&prospect).Error
 
 	expiration := time.Now().Add(365 * 24 * time.Hour)
 	cookie := http.Cookie{Name: "ProspectCookiSecrect", Value: prospect.CookiSecrect, Expires: expiration}
@@ -39,8 +40,6 @@ func RegisterProspect(c *gin.Context){
 	}
 }
 
-
-
 func VerifyProspectEmail(c *gin.Context) {
 	var prospect models.Prospect
 	c.BindJSON(&prospect)
@@ -50,66 +49,66 @@ func VerifyProspectEmail(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
-	}else{
-		if(prospect.IsEmailVerified){
+	} else {
+		if prospect.IsEmailVerified {
 			c.JSON(http.StatusOK, "Email Already Verified")
-		}else{
+		} else {
 			database.DB.Model(&prospect).Update("is_email_verified", true)
 			c.JSON(http.StatusOK, "Prospect Email Verified")
 		}
-		
+
 	}
 }
 
 func GenerateCookieSecret() string {
 	key := make([]byte, 64)
-	_ , err := rand.Read(key)
+	_, err := rand.Read(key)
 	if err != nil {
 		// handle error here
 	}
-	
+
 	return hex.EncodeToString(key)
 }
 
-func GetProspectByEmail(c *gin.Context){
+func GetProspectByEmail(c *gin.Context) {
 	var prospect models.Prospect
 	c.BindJSON(&prospect)
 
 	err := database.DB.Where("Email = ?", prospect.Email).First(&prospect).Error
 
-	if err != nil{
+	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
-	}else{
+	} else {
 		c.JSON(http.StatusOK, prospect)
 	}
 }
 
-func GetProspectById(c *gin.Context){
+func GetProspectById(c *gin.Context) {
 	var prospect models.Prospect
 	c.BindJSON(&prospect)
 
-	err := database.DB.Where("Id = ?", prospect.Id).First(&prospect).Error
+	err := database.DB.Where("id = ?", prospect.ID).First(&prospect).Error
 
-	if err != nil{
+	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
-	}else{
+	} else {
 		c.JSON(http.StatusOK, prospect)
 	}
 }
 
-func CreateProspectDomainQuery(c *gin.Context){
+func CreateProspectDomainQuery(c *gin.Context) {
 	var domainQuery models.ProspectDomainQuery
 	c.BindJSON(&domainQuery)
 
 	domainQuery.Status = 1 //will change to Enum later
-	domainQuery.CreatedDate = time.Now()
-	domainQuery.ModifiedDate = time.Now()
+	domainQuery.CreatedAt = time.Now()
+	domainQuery.ModifiedAt = time.Now()
 
 	fmt.Println(domainQuery)
 
-	err := database.DB.Create(&domainQuery).Error;
+	err := database.DB.Create(&domainQuery).Error
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -119,35 +118,34 @@ func CreateProspectDomainQuery(c *gin.Context){
 	}
 }
 
-func GetProspectDomainQuery(c *gin.Context){
+func GetProspectDomainQuery(c *gin.Context) {
 	var domainQueries []models.ProspectDomainQuery
 	c.BindJSON(&domainQueries)
 
 	result := database.DB.Find(&domainQueries)
 
-	if result.Error != nil{
+	if result.Error != nil {
 		c.JSON(http.StatusNotFound, result.Error)
-			return
-	}else{
+		return
+	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"data": domainQueries,
 		})
 	}
 }
 
-func CreateNewTransaction(c *gin.Context){
+func CreateNewTransaction(c *gin.Context) {
 	var transaction models.Transaction
 	c.BindJSON(&transaction)
 
-	
-	transaction.CreatedDate = time.Now()
-	transaction.ModifiedDate = time.Now()
+	transaction.CreatedAt = time.Now()
+	transaction.ModifiedAt = time.Now()
 	transaction.IsActive = true
 	transaction.IsDelete = false
-	
+
 	fmt.Println(transaction)
 
-	err := database.DB.Create(&transaction).Error;
+	err := database.DB.Create(&transaction).Error
 
 	if err != nil {
 		fmt.Println(err.Error())

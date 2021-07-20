@@ -1,19 +1,19 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
-type Transaction struct{
-	Id        					uint
-	ProspectId	     			uint 
-	ProspectDomainQueryID    	uint 
-	Price   					float64 
-	PaymentMethod    			uint 
-	CreatedBy					uint
-	CreatedDate 				time.Time
-	ModifiedBy					uint
-	ModifiedDate 				time.Time
-	IsActive    				bool  	`json:"is_active"`
-	IsDelete    				bool	`json:"is_delete"`
+type Transaction struct {
+	ID                    uint
+	ProspectID            uint
+	ProspectDomainQueryID uint
+	Price                 float64
+	PaymentMethod         uint
+	CreatedBy             uint
+	CreatedAt             time.Time
+	ModifiedBy            uint
+	ModifiedAt            time.Time
+	IsActive              bool `json:"is_active"`
+	IsDelete              bool `json:"is_delete"`
 }

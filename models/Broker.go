@@ -1,19 +1,19 @@
 package models
 
 import (
-    "time"
+	"time"
 )
 
-type Broker struct{
-	ID        	uint 
-	Name      	string 
-	Email		string 
-	Password    string 
-	ImagePath  	string
-	IsActive    bool  	`json:"is_active"`
-	IsDelete    bool	`json:"is_delete"`
-	CreatedBy	uint
-	CreatedDate time.Time
-	ModifiedBy	uint
-	ModifiedDate time.Time
+type Broker struct {
+	ID         uint
+	Name       string
+	Email      string
+	Password   string
+	ImagePath  string
+	IsActive   bool
+	IsDelete   bool
+	CreatedBy  uint
+	CreatedAt  time.Time
+	ModifiedBy uint
+	ModifiedAt time.Time
 }
