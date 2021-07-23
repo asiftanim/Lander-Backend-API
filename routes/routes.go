@@ -9,6 +9,7 @@ import (
 
 func Init() *gin.Engine {
 	server := gin.New()
+	server.Static("/public", "./public")
 
 	api := server.Group("api")
 	{

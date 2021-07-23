@@ -1,17 +1,17 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/base64"
 	"fmt"
 	"image"
-	"image/png"
+	"image/jpeg"
 	"lander/database"
 	"lander/models"
 	"lander/services"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -75,7 +75,7 @@ func RegisterBroker(c *gin.Context) {
 	}
 }
 
-func ResetPassword(c *gin.Context){
+func ResetPassword(c *gin.Context) {
 	var broker models.Broker
 	c.BindJSON(&broker)
 
@@ -128,10 +128,16 @@ func UpdateBroker(c *gin.Context) {
 	var broker models.Broker
 	c.BindJSON(&broker)
 
-	myuuid := uuid.NewV4()
-	fmt.Println(myuuid)
+	myuuid := uuid.NewV4().String()
 
-	c.JSON(http.StatusOK, "Development in progress")
+	path,err := ConvertAndSaveBase64toPng(myuuid, broker.ImagePath)
+
+	if err != nil{
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+	}
+	
+	c.JSON(http.StatusOK, path)
+
 	//GenerateBase64ToImage(broker.ImagePath)
 	//save file to local folder and set name as UUID
 
@@ -165,11 +171,9 @@ func UpdateDomainAskingPrice(c *gin.Context) {
 	}
 }
 
-func GenerateBase64ToImage(data string) {
-
-	r := bytes.NewReader([]byte(data))
-
-	reader := base64.NewDecoder(base64.StdEncoding, r)
+func ConvertAndSaveBase64toPng(name string, data string) (string, error){
+	base_path := "public/broker/"
+	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data))
 	m, formatString, err := image.Decode(reader)
 	if err != nil {
 		log.Fatal(err)
@@ -178,18 +182,24 @@ func GenerateBase64ToImage(data string) {
 	fmt.Println(bounds, formatString)
 
 	//Encode from image format to writer
-	pngFilename := "test.png"
-	f, err := os.OpenFile(pngFilename, os.O_WRONLY|os.O_CREATE, 0777)
+	image_path := base_path + name + ".jpg"
+	//check if base_path exists or not
+	//if no create base_path
+	//if exists save image file
+
+	
+	f, err := os.OpenFile(image_path, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		log.Fatal(err)
-		return
+		return "", err
 	}
 
-	err = png.Encode(f, m)
+	err = jpeg.Encode(f, m, &jpeg.Options{Quality: 100})
 	if err != nil {
 		log.Fatal(err)
-		return
+		return "", err
 	}
-	fmt.Println("Png file", pngFilename, "created")
+	fmt.Println("Image file", image_path, "created")
 
+	return image_path, err
 }
