@@ -5,7 +5,7 @@ import (
 )
 
 type Chat struct {
-	ID         uint
+	Id         uint
 	Message    string
 	SenderId   uint
 	ReceiverId uint

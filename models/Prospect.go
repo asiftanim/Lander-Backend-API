@@ -5,7 +5,7 @@ import (
 )
 
 type Prospect struct {
-	ID              uint
+	Id              uint
 	FirstName       string
 	LastName        string
 	Email           string

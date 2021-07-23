@@ -5,7 +5,7 @@ import (
 )
 
 type Broker struct {
-	ID         uint
+	Id         uint
 	Name       string
 	Email      string
 	Password   string

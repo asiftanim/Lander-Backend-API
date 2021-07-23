@@ -1,44 +1,56 @@
 package middlewares
 
 import (
+	"errors"
+	"fmt"
+	"lander/services"
+	"net/http"
+	"strings"
+
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
 
-func Authorize() gin.HandlerFunc{
-	return func(c *gin.Context){
-		
+const (
+	authorizationHeaderKey  = "authorization"
+	authorizationTypeBearer = "bearer"
+)
+
+func Authorize() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authorizationHeader := c.GetHeader(authorizationHeaderKey)
+		if len(authorizationHeader) == 0 {
+			err := errors.New("Authorization Header is not provided")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		fields := strings.Fields(authorizationHeader)
+		if len(fields) < 2 {
+			err := errors.New("Invalid Authorization Header format")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		authorizationType := strings.ToLower(fields[0])
+		if authorizationType != authorizationTypeBearer {
+			err := errors.New("Authorization type not supported")
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		accessToken := fields[1]
+		token, err := services.ValidateToken(accessToken)
+		if token.Valid {
+			claims := token.Claims.(jwt.MapClaims)
+			fmt.Println("Claims[authorized]: ", claims["authorized"])
+			fmt.Println("Claims[user_id]: ", claims["user_id"])
+			fmt.Println("Claims[email]: ", claims["email"])
+			fmt.Println("Claims[ExpiresAt]: ", claims["exp"])
+		} else {
+			fmt.Println(err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+		}
+
 	}
 }
-
-// AuthorizeJWT validates the token from the http request, returning a 401 if it's not valid
-// func AuthorizeJWT() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		const BEARER_SCHEMA = "Bearer "
-// 		authHeader := c.GetHeader("Authorization")
-// 		tokenString := authHeader[len(BEARER_SCHEMA):]
-
-// 		token, err := ValidateToken(tokenString)
-
-// 		if token.Valid {
-// 			claims := token.Claims.(jwt.MapClaims)
-// 			log.Println("Claims[Name]: ", claims["authorized"])
-// 			log.Println("Claims[Admin]: ", claims["user_id"])
-// 			log.Println("Claims[ExpiresAt]: ", claims["exp"])
-// 		} else {
-// 			log.Println(err)
-// 			c.AbortWithStatus(http.StatusUnauthorized)
-// 		}
-// 	}
-// }
-
-// func ValidateToken(tokenString string) (*jwt.Token, error) {
-// 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-// 		// Signing method validation
-// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-// 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-// 		}
-// 		// Return the secret signing key
-// 		return []byte(jwtSrv.secretKey), nil
-// 	})
-// }
-

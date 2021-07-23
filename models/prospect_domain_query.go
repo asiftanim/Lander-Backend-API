@@ -5,10 +5,10 @@ import (
 )
 
 type ProspectDomainQuery struct {
-	ID             uint
-	ProspectID     uint
-	BrokerID       uint
-	DomainID       uint
+	Id             uint
+	ProspectId     uint
+	BrokerId       uint
+	DomainId       uint
 	OfferType      uint
 	OfferedPrice   float64
 	AskingPrice    float64

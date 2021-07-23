@@ -2,12 +2,12 @@ package routes
 
 import (
 	"lander/controllers"
+	"lander/middlewares"
 
 	"github.com/gin-gonic/gin"
 )
 
-
-func Init() *gin.Engine{
+func Init() *gin.Engine {
 	server := gin.New()
 
 	api := server.Group("api")
@@ -15,38 +15,37 @@ func Init() *gin.Engine{
 		v1 := api.Group("v1")
 		{
 			//Broker
-			broker := v1.Group("broker")
+			v1.POST("broker/login", controllers.Login)
+			v1.POST("broker/registration", controllers.RegisterBroker)
+
+			broker := v1.Group("broker").Use(middlewares.Authorize())
 			{
-				broker.POST("login", controllers.Login)
-				broker.POST("registration", controllers.RegisterBroker)
+				broker.PUT("reset-password", controllers.ResetPassword)
 				broker.PUT("profile-update", controllers.UpdateBroker)
-				broker.POST("create-message", controllers.InsertChat)
+				broker.POST("send-message", controllers.SendMessage)
 				broker.GET("get-all-prospects", controllers.GetAllProspects)
 				broker.GET("get-prospect-by-email", controllers.GetProspectByEmail)
 				broker.GET("get-prospect-by-id", controllers.GetProspectById)
 				broker.POST("set-price", controllers.GetAllProspects)
 				broker.GET("get-all-domain-queries", controllers.GetProspectDomainQuery)
 				broker.PUT("update-domain-asking-price", controllers.UpdateDomainAskingPrice)
-				
+
 			}
-			
+
 			//Prospect
 			prospect := v1.Group("prospect")
 			{
 				prospect.POST("create-prospect", controllers.RegisterProspect)
 				prospect.POST("verify-email", controllers.VerifyProspectEmail)
-				prospect.POST("create-message", controllers.InsertChat)
+				prospect.POST("send-message", controllers.SendMessage)
 				prospect.POST("create-domain-query", controllers.CreateProspectDomainQuery)
 				prospect.POST("create-transaction", controllers.CreateNewTransaction)
 			}
-	
+
 			//Common
-			
-	
+
 		}
 	}
 
-	
-
-	return server;
+	return server
 }

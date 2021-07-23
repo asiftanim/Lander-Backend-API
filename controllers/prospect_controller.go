@@ -88,7 +88,7 @@ func GetProspectById(c *gin.Context) {
 	var prospect models.Prospect
 	c.BindJSON(&prospect)
 
-	err := database.DB.Where("id = ?", prospect.ID).First(&prospect).Error
+	err := database.DB.Where("id = ?", prospect.Id).First(&prospect).Error
 
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
@@ -120,7 +120,6 @@ func CreateProspectDomainQuery(c *gin.Context) {
 
 func GetProspectDomainQuery(c *gin.Context) {
 	var domainQueries []models.ProspectDomainQuery
-	c.BindJSON(&domainQueries)
 
 	result := database.DB.Find(&domainQueries)
 

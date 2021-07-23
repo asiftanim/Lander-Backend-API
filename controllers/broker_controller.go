@@ -8,12 +8,12 @@ import (
 	"image/png"
 	"lander/database"
 	"lander/models"
+	"lander/services"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -25,16 +25,16 @@ func Login(c *gin.Context) {
 
 	var brokerPass = broker.Password
 
-	database.DB.Where("Email = ?", broker.Email).First(&broker)
+	database.DB.Where("email = ?", broker.Email).First(&broker)
 
 	match := CheckPasswordHash(brokerPass, broker.Password)
 
-	if broker.ID == 0 {
+	if broker.Id == 0 {
 		c.JSON(http.StatusNotFound, "User not found!!!")
 	}
 
 	if match {
-		token, err := CreateToken(broker.ID)
+		token, err := services.CreateToken(broker.Id, broker.Email)
 		if err != nil {
 			c.JSON(http.StatusUnprocessableEntity, err.Error())
 			return
@@ -48,27 +48,17 @@ func Login(c *gin.Context) {
 
 }
 
-func CreateToken(userId uint) (string, error) {
-	var err error
-	//Creating Access Token
-	os.Setenv("ACCESS_SECRET", "jdnfksdmfksd") //this should be in an env file
-	atClaims := jwt.MapClaims{}
-	atClaims["authorized"] = true
-	atClaims["user_id"] = userId
-	atClaims["exp"] = time.Now().Add(time.Minute * 15).Unix()
-	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	token, err := at.SignedString([]byte(os.Getenv("ACCESS_SECRET")))
-	if err != nil {
-		return "", err
-	}
-	return token, nil
-}
-
 func RegisterBroker(c *gin.Context) {
 	var broker models.Broker
 	c.BindJSON(&broker)
 
-	hashPass, _ := HashPassword(broker.Password)
+	hashPass, hashErr := HashPassword(broker.Password)
+
+	if hashErr != nil {
+		fmt.Println(hashErr.Error())
+		c.JSON(http.StatusNotFound, "Unable to encrypt password")
+	}
+
 	broker.Password = hashPass
 	broker.IsActive = true
 	broker.IsDelete = false
@@ -85,6 +75,13 @@ func RegisterBroker(c *gin.Context) {
 	}
 }
 
+func ResetPassword(c *gin.Context){
+	var broker models.Broker
+	c.BindJSON(&broker)
+
+	c.JSON(http.StatusOK, "Development in progress")
+}
+
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return string(bytes), err
@@ -95,10 +92,11 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func InsertChat(c *gin.Context) {
+func SendMessage(c *gin.Context) {
 	var chat models.Chat
 	c.BindJSON(&chat)
 
+	chat.Status = 1
 	chat.CreatedAt = time.Now()
 
 	err := database.DB.Create(&chat).Error
@@ -133,8 +131,8 @@ func UpdateBroker(c *gin.Context) {
 	myuuid := uuid.NewV4()
 	fmt.Println(myuuid)
 
-	c.JSON(http.StatusOK, myuuid)
-	GenerateBase64ToImage(broker.ImagePath)
+	c.JSON(http.StatusOK, "Development in progress")
+	//GenerateBase64ToImage(broker.ImagePath)
 	//save file to local folder and set name as UUID
 
 	// folder_path_from_env := "../public/broker/"
@@ -148,7 +146,6 @@ func UpdateBroker(c *gin.Context) {
 	// } else {
 	// 	c.JSON(http.StatusOK, broker)
 	// }
-
 }
 
 func UpdateDomainAskingPrice(c *gin.Context) {
@@ -158,9 +155,7 @@ func UpdateDomainAskingPrice(c *gin.Context) {
 	domainQuery.Status = 4
 	domainQuery.ModifiedAt = time.Now()
 
-	fmt.Println(domainQuery)
-
-	err := database.DB.Model(&domainQuery).Where("id = ?", domainQuery.ID).Update("asking_price", domainQuery.AskingPrice).Error
+	err := database.DB.Model(&domainQuery).Where("id = ?", domainQuery.Id).Update("asking_price", domainQuery.AskingPrice).Error
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -168,7 +163,6 @@ func UpdateDomainAskingPrice(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, domainQuery)
 	}
-
 }
 
 func GenerateBase64ToImage(data string) {

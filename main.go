@@ -1,23 +1,22 @@
 package main
 
 import (
-  "lander/database"
-  "lander/routes"
-  "lander/configs"
-  
-  "log"
-  
+	"lander/configs"
+	"lander/database"
+	"lander/routes"
+
+	"log"
 )
 
 func main() {
-  config, err := configs.LoadConfig(".")
-  
-  if err != nil{
-    log.Fatal("Connot load config", err)
-  }
+	config, err := configs.LoadConfig(".")
 
-  database.Connect(config.DBSource)
-  server := routes.Init()
+	if err != nil {
+		log.Fatal("Connot load config", err)
+	}
 
-  log.Fatal(server.Run(config.SERVER))
+	database.Connect(config.DBSource)
+	server := routes.Init()
+
+	log.Fatal(server.Run(config.SERVER))
 }

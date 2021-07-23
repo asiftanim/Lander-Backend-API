@@ -5,7 +5,7 @@ import (
 )
 
 type ChatMailCandidate struct {
-	ID        uint
+	Id        uint
 	ChatId    uint
 	MailTime  time.Time
 	IsActive  bool

@@ -5,15 +5,15 @@ import (
 )
 
 type Transaction struct {
-	ID                    uint
-	ProspectID            uint
-	ProspectDomainQueryID uint
+	Id                    uint
+	ProspectId            uint
+	ProspectDomainQueryId uint
 	Price                 float64
 	PaymentMethod         uint
 	CreatedBy             uint
 	CreatedAt             time.Time
 	ModifiedBy            uint
 	ModifiedAt            time.Time
-	IsActive              bool `json:"is_active"`
-	IsDelete              bool `json:"is_delete"`
+	IsActive              bool
+	IsDelete              bool
 }

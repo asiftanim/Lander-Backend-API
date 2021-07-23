@@ -4,13 +4,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Config struct{
-	DBSource string `mapstructure:"DB_SOURCE"`
-	SERVER string `mapstructure:"SERVER"`
-	JWT_SECRET string `mapstructure:"JWT_SECRET"`
+type Config struct {
+	DBSource             string `mapstructure:"DB_SOURCE"`
+	SERVER               string `mapstructure:"SERVER"`
+	JWT_SECRET           string `mapstructure:"JWT_SECRET"`
+	JWT_TOKEN_EXPIRETIME string `mapstructure:"JWT_TOKEN_EXPIRETIME"`
 }
 
-func LoadConfig(path string) (config Config, err error){
+func LoadConfig(path string) (config Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
 	viper.SetConfigType("env")
@@ -18,7 +19,7 @@ func LoadConfig(path string) (config Config, err error){
 	viper.AutomaticEnv()
 
 	err = viper.ReadInConfig()
-	if err != nil{
+	if err != nil {
 		return
 	}
 
