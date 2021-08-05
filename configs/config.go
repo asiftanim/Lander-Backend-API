@@ -9,6 +9,7 @@ type Config struct {
 	SERVER               string `mapstructure:"SERVER"`
 	JWT_SECRET           string `mapstructure:"JWT_SECRET"`
 	JWT_TOKEN_EXPIRETIME string `mapstructure:"JWT_TOKEN_EXPIRETIME"`
+	IMAGE_PATH           string `mapstructure:"IMAGE_PATH"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

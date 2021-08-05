@@ -8,7 +8,6 @@ require (
 	github.com/coreos/go-etcd v2.0.0+incompatible // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gin-gonic/gin v1.7.2
-	github.com/joho/godotenv v1.3.0 // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/spf13/viper v1.8.1 // indirect
 	github.com/xordataexchange/crypt v0.0.3-0.20170626215501-b2862e3d0a77 // indirect
