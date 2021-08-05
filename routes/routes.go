@@ -22,6 +22,7 @@ func Init() *gin.Engine {
 			broker := v1.Group("broker").Use(middlewares.Authorize())
 			{
 				broker.PUT("reset-password", controllers.ResetPassword)
+				broker.GET("profile-info", controllers.GetBrokerProfileInfo)
 				broker.PUT("profile-update", controllers.UpdateBroker)
 				broker.POST("send-message", controllers.SendMessage)
 				broker.GET("get-all-prospects", controllers.GetAllProspects)

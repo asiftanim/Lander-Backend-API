@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	uuid "github.com/satori/go.uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -127,31 +128,28 @@ func GetAllProspects(c *gin.Context) {
 func UpdateBroker(c *gin.Context) {
 	var broker models.Broker
 	c.BindJSON(&broker)
-
+	fmt.Println(broker.Name)
+	fmt.Println(broker.Id)
 	myuuid := uuid.NewV4().String()
 
-	path,err := ConvertAndSaveBase64toPng(myuuid, broker.ImagePath)
-
-	if err != nil{
+	path, err := ConvertAndSaveBase64toPng(myuuid, broker.ImagePath)
+	//fmt.Println(path)
+	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 	}
-	
+	broker.ImagePath = path
+
 	c.JSON(http.StatusOK, path)
+	fmt.Println(broker.ImagePath)
+	db_err := database.DB.Model(&broker).Where("id = ?", broker.Id).Updates(models.Broker{Name: broker.Name, ImagePath: broker.ImagePath}).Error
 
-	//GenerateBase64ToImage(broker.ImagePath)
-	//save file to local folder and set name as UUID
-
-	// folder_path_from_env := "../public/broker/"
-	//broker.ImagePath = folder_path_from_env+myuuid+".jpg"
-
-	//err := database.DB.Model(&broker).Where("id = ?", broker.ID).Update("image_path", broker.ImagePath).Error
-
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// 	c.JSON(http.StatusNotFound, err.Error)
-	// } else {
-	// 	c.JSON(http.StatusOK, broker)
-	// }
+	if db_err != nil {
+		fmt.Println(db_err.Error())
+		c.JSON(http.StatusNotFound, db_err.Error)
+	} else {
+		c.JSON(http.StatusOK, broker)
+		fmt.Println("ok")
+	}
 }
 
 func UpdateDomainAskingPrice(c *gin.Context) {
@@ -171,8 +169,16 @@ func UpdateDomainAskingPrice(c *gin.Context) {
 	}
 }
 
-func ConvertAndSaveBase64toPng(name string, data string) (string, error){
-	base_path := "public/broker/"
+func ConvertAndSaveBase64toPng(name string, data string) (string, error) {
+
+	image_path_error := godotenv.Load("app.env")
+
+	if image_path_error != nil {
+		log.Fatalf("Error loading .env file")
+	}
+	// getting env variables IMAGE_PATH
+	env_image_path := os.Getenv("IMAGE_PATH")
+
 	reader := base64.NewDecoder(base64.StdEncoding, strings.NewReader(data))
 	m, formatString, err := image.Decode(reader)
 	if err != nil {
@@ -182,12 +188,12 @@ func ConvertAndSaveBase64toPng(name string, data string) (string, error){
 	fmt.Println(bounds, formatString)
 
 	//Encode from image format to writer
-	image_path := base_path + name + ".jpg"
+
 	//check if base_path exists or not
 	//if no create base_path
 	//if exists save image file
+	image_path := env_image_path + name + ".jpg"
 
-	
 	f, err := os.OpenFile(image_path, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		log.Fatal(err)
@@ -202,4 +208,18 @@ func ConvertAndSaveBase64toPng(name string, data string) (string, error){
 	fmt.Println("Image file", image_path, "created")
 
 	return image_path, err
+}
+
+func GetBrokerProfileInfo(c *gin.Context) {
+	var broker models.Broker
+	c.BindJSON(&broker)
+	fmt.Println(broker.Id)
+	result := database.DB.First(&broker, broker.Id)
+
+	if result.Error != nil {
+		c.JSON(http.StatusNotFound, result.Error)
+		return
+	} else {
+		c.JSON(http.StatusOK, broker)
+	}
 }
